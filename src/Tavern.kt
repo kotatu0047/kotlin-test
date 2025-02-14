@@ -1,29 +1,33 @@
+import kotlin.math.roundToInt
+
 const val TAVEN_NAME = "Taernyl's Folly"
 
-fun main(args: Array<String>) {
-//    placeOrder("shandy,Dragon's Breath,5.91")
-    placeOrder("elixir,Shirley's Temple,4.12")
+var playerGold = 10
+var playerSilver = 10
 
-    val phrase = "Ah, delicious $TAVEN_NAME!"
-    println("Madrigal exclaims: ${toDragonSpeak(phrase)}")
+fun main(args: Array<String>) {
+    placeOrder("shandy,Dragon's Breath,5.91")
+//    placeOrder("elixir,Shirley's Temple,4.12")
 }
 
-private fun placeOrder(menuData: String) {
-    val indexOfApostrophe = TAVEN_NAME.indexOf('\'')
-    val tavernMaster = TAVEN_NAME.substring(0..<indexOfApostrophe)
-    println("Madrigal speaks with $tavernMaster about their order.")
+fun performPurchase(price: Double) {
+    displayBalance()
+    val totalPurse = playerGold + (playerSilver / 100.0)
+    println("Total purse: $totalPurse")
+    println("Purchasing item for $price")
 
-    val (type, name, price) = menuData.split(',')
+    val remainingBalance = totalPurse - price
+    println("Remaining balance: ${"%.2f".format(remainingBalance)}")
 
-    val message = "Madrigal buys a $name ($type) for $price."
-    println(message)
+    val remainingGold = remainingBalance.toInt()
+    val remainingSilver = (remainingBalance % 1 * 100).roundToInt()
+    playerGold = remainingGold
+    playerSilver = remainingSilver
+    displayBalance()
+}
 
-    val phrase = if (name == "Dragon's Breath") {
-        "Madrigal exclaims: ${toDragonSpeak("Ah, delicious $name!")}"
-    } else {
-        "Madrigal says: Thanks for the $name."
-    }
-    println(phrase)
+private fun displayBalance() {
+    println("Player's purse balance: Gold: $playerGold , Silver: $playerSilver")
 }
 
 private fun toDragonSpeak(phrase: String) =
@@ -37,3 +41,23 @@ private fun toDragonSpeak(phrase: String) =
             else -> it.value
         }
     }
+
+
+private fun placeOrder(menuData: String) {
+    val indexOfApostrophe = TAVEN_NAME.indexOf('\'')
+    val tavernMaster = TAVEN_NAME.substring(0..<indexOfApostrophe)
+    println("Madrigal speaks with $tavernMaster about their order.")
+
+    val (type, name, price) = menuData.split(',')
+    val message = "Madrigal buys a $name ($type) for $price."
+    println(message)
+
+    performPurchase(price.toDouble())
+
+    val phrase = if (name == "Dragon's Breath") {
+        "Madrigal exclaims: ${toDragonSpeak("Ah, delicious $name!")}"
+    } else {
+        "Madrigal says: Thanks for the $name."
+    }
+    println(phrase)
+}
